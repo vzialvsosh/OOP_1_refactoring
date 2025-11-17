@@ -11,7 +11,7 @@ public class Book
     get => _price;
     private set
     {
-      if (value < 0) throw new ArgumentOutOfRangeException();
+      if (value < 0) throw new ArgumentOutOfRangeException("Book cannot have negative price\n");
       _price = value;
     }
   }
@@ -19,7 +19,7 @@ public class Book
     get => _stock;
     private set
     {
-      if (value < 0) throw new ArgumentOutOfRangeException();
+      if (value < 0) throw new ArgumentOutOfRangeException("Book stock must be at least 0\n");
       _stock = value;
     }
   }
@@ -36,7 +36,7 @@ public class Book
 
   public void Rent()
   {
-    if (Stock == 0) throw new InvalidOperationException();
+    if (Stock == 0) throw new InvalidOperationException("No books in stock to rent\n");
     Stock--;
   }
 
@@ -57,6 +57,6 @@ public class Book
 
   public override string ToString()
   {
-    return $"{Isbn} | {Title} | {Author} | {Price} | stock={Stock}";
+    return $"{Isbn} | {Title} | {Author} | {Price:F2} | stock={Stock}";
   }
 }

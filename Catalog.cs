@@ -3,10 +3,11 @@ public class Catalog
   private Dictionary<string, Book> _items = new();
   private List<string> _order = new();
 
-  public int Count { get => _order.Count(); }
+  public int Count { get => _order.Count; }
 
   public void Add(Book book)
   {
+    if (_order.Contains(book.Isbn)) throw new InvalidOperationException("Cannot add existing isbn to catalog\n");
     _order.Add(book.Isbn);
     _items[book.Isbn] = book;
   }
@@ -22,12 +23,14 @@ public class Catalog
     return _items.ContainsKey(isbn);
   }
 
-  public IEnumerable<Book> All()
+  public IReadOnlyCollection<Book> All()
   {
+    List<Book> list = new();
     foreach (string isbn in _order)
     {
-      yield return _items[isbn];
+      list.Add(_items[isbn]);
     }
+    return list.AsReadOnly();
   }
 
   public Book this[string isbn]
@@ -55,7 +58,7 @@ public class Catalog
           i++;
         }
       }
-      throw new KeyNotFoundException();
+      throw new KeyNotFoundException($"No book in catalog: ({key.author}, {key.index})\n");
     }
     set
     {
@@ -64,11 +67,15 @@ public class Catalog
       {
         if (_items[isbn].Author == key.author)
         {
-          if (i == key.index) _items[isbn] = value;
+          if (i == key.index)
+          {
+            _items[isbn] = value;
+            return;
+          }
           i++;
         }
       }
-      throw new KeyNotFoundException();
+      throw new KeyNotFoundException($"No book in catalog: ({key.author}, {key.index})\n");
     }
   }
 }
